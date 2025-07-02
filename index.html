@@ -188,5 +188,74 @@ Highcharts.chart('excessChart', {
       this.series.chart.xAxis[0].drawCrosshair(event, this);
     };
   </script>
+    <script>
+function syncExtremes(e) {
+    var thisChart = this.chart;
+    Highcharts.each(Highcharts.charts, function (chart) {
+        if (chart !== thisChart && chart) {
+            if (chart.xAxis[0].setExtremes) {
+                chart.xAxis[0].setExtremes(e.min, e.max, undefined, false);
+            }
+        }
+    });
+}
+
+Highcharts.chart('tempChart', {
+    chart: { zoomType: 'x' },
+    title: { text: 'Station Heat Data: Temperature and Heat Index' },
+    xAxis: {
+        type: 'datetime',
+        crosshair: {
+            color: '#ffffff',
+            width: 1,
+            dashStyle: 'Solid'
+        },
+        events: { setExtremes: syncExtremes },
+        title: { text: 'Time' }
+    },
+    tooltip: { shared: true },
+    yAxis: {
+        title: { text: 'Temperature (°F)' }
+    },
+    series: [
+        {
+            name: 'Temperature',
+            data: [], // your temp data here
+            color: chartColors[0]
+        },
+        {
+            name: 'Heat Index',
+            data: [], // your heat index data here
+            color: chartColors[1]
+        }
+    ]
+});
+
+Highcharts.chart('excessChart', {
+    chart: { zoomType: 'x' },
+    title: { text: 'Heat Excess (Heat Index - Temperature)' },
+    xAxis: {
+        type: 'datetime',
+        crosshair: {
+            color: '#ffffff',
+            width: 1,
+            dashStyle: 'Solid'
+        },
+        events: { setExtremes: syncExtremes },
+        title: { text: 'Time' }
+    },
+    tooltip: { shared: true },
+    yAxis: {
+        title: { text: 'Excess Heat (°F)' }
+    },
+    series: [
+        {
+            name: 'Heat Excess',
+            data: [], // your excess data here
+            color: chartColors[2]
+        }
+    ]
+});
+</script>
 </body>
 </html>
