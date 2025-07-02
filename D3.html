@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>168th Station Heat Data (D3.js)</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      background-color: #1b1b1b;
+      color: #eee;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    svg {
+      width: 100%;
+      height: 350px;
+      margin-bottom: 40px;
+    }
+    .axis line, .axis path {
+      stroke: #444;
+    }
+    .axis text {
+      fill: #ccc;
+    }
+    .line {
+      fill: none;
+      stroke-width: 2;
+    }
+    .overlay {
+      fill: none;
+      pointer-events: all;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Temperature and Heat Index</h2>
+<svg id="chart1"></svg>
+
+<h2>Heat Excess (Heat Index - Temp)</h2>
+<svg id="chart2"></svg>
+
+<script>
+const margin = {top: 10, right: 20, bottom: 30, left: 50};
+
+function createChart(svgId, dataSets, colors, yLabel) {
+  const svg = d3.select(svgId),
+        width = svg.node().clientWidth - margin.left - margin.right,
+        height = svg.node().clientHeight - margin.top - margin.bottom;
+
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleTime().range([0, width]);
+  const y = d3.scaleLinear().range([height, 0]);
+
+  const xAxis = g.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`);
+  const yAxis = g.append("g").attr("class", "axis");
+
+  const lines = dataSets.map((_, i) => d3.line()
+    .x(d => x(d.time))
+    .y(d => y(d.value)));
+
+  const zoom = d3.zoom()
+    .scaleExtent([1, 20])
+    .translateExtent([[0, 0], [width, height]])
+    .extent([[0, 0], [width, height]])
+    .on("zoom", zoomed);
+
+  svg.append("rect")
+    .attr("class", "overlay")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("transform", `translate(${margin.left},${margin.top})`)
+    .call(zoom);
+
+  x.domain(d3.extent(dataSets[0], d => d.time));
+  y.domain([
+    d3.min(dataSets.flat(), d => d.value) - 2,
+    d3.max(dataSets.flat(), d => d.value) + 2
+  ]);
+
+  xAxis.call(d3.axisBottom(x));
+  yAxis.call(d3.axisLeft(y));
+
+  dataSets.forEach((data, i) => {
+    g.append("path")
+      .datum(data)
+      .attr("class", "line")
+      .attr("stroke", colors[i])
+      .attr("d", lines[i]);
+  });
+
+  function zoomed(event) {
+    const newX = event.transform.rescaleX(x);
+    xAxis.call(d3.axisBottom(newX));
+    lines.forEach((line, i) => {
+      g.selectAll(".line").filter((_, idx) => idx === i).attr("d", line.x(d => newX(d.time)));
+    });
+  }
+}
+
+d3.csv('168_station_data.csv').then(rawData => {
+  const data = rawData.map(d => ({
+    time: new Date(d.Timestamp),
+    temp: +d.Temperature,
+    heat: +d.HeatIndex,
+    excess: +(d.HeatIndex - d.Temperature).toFixed(1)
+  }));
+
+  createChart("#chart1",
+    [data.map(d => ({time: d.time, value: d.temp})), data.map(d => ({time: d.time, value: d.heat}))],
+    ["#ffffff", "#fb8b1e"],
+    "°F");
+
+  createChart("#chart2",
+    [data.map(d => ({time: d.time, value: d.excess}))],
+    ["#ff433d"],
+    "Excess (°F)");
+});
+</script>
+
+</body>
+</html>
