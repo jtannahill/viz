@@ -133,8 +133,8 @@
         yAxis: { title: { text: '°F' } },
         tooltip: { shared: true },
         series: [
-          { name: 'Temperature', data: tempData, color: '#00c1d5' },
-          { name: 'Heat Index', data: heatData, color: '#ff6f61' }
+          { name: 'Temperature', data: tempData, color: '#ffffff' },
+          { name: 'Heat Index', data: heatData, color: '#fb8b1e' }
         ]
       }));
 
@@ -144,7 +144,7 @@
         xAxis: { type: 'datetime', crosshair: true, events: { setExtremes: syncExtremes } },
         yAxis: { title: { text: 'Excess (°F)' } },
         tooltip: { shared: true },
-        series: [{ name: 'Heat Excess', data: excessData, color: '#9b59b6', fillOpacity: 0.5 }]
+        series: [{ name: 'Heat Excess', data: excessData, color: '#ff433d', fillOpacity: 0.5 }]
       }));
     });
 </script>
