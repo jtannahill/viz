@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>168th Street Station in Manhattan</title>
+  <meta charset="utf-8">
+  <title>168th Street Station in Manhattan</title>
 
-    <!-- Core Highcharts & modules -->
-    <script src="https://code.highcharts.com/stock/highstock.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <!-- Highcharts core + modules -->
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/export-data.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-    <style>
-        body {
-            background-color: #1b1b1b;
-            color: #e1e1e1;
-            font-family: 'Helvetica Neue', Arial, system-ui, sans-serif;
-            margin: 40px;
-        }
+  <style>
+    body {
+      background-color: #1b1b1b;
+      color: #e1e1e1;
+      font-family: 'Helvetica Neue', Arial, system-ui, sans-serif;
+      margin: 40px;
+    }
 
-        h2 {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            color: #e1e1e1;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 4px;
-        }
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #e1e1e1;
+      margin-top: 40px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 4px;
+    }
 
-        #tempChart, #excessChart {
-            background-color: #1b1b1b;
-            border-radius: 6px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-        }
-    </style>
+    #tempChart, #excessChart {
+      background-color: #1b1b1b;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    }
+  </style>
 </head>
 <body>
 <h2>Temperature and Heat Index Over Time</h2>
@@ -45,38 +45,38 @@
 
 <script>
 Highcharts.setOptions({
-    chart: {
-        backgroundColor: '#1b1b1b',
-        style: {
-            fontFamily: 'Helvetica Neue, Arial, sans-serif'
-        }
-    },
-    title: {
-        style: {
-            color: '#e1e1e1',
-            fontWeight: '600',
-            fontSize: '16px'
-        }
-    },
-    xAxis: {
-        labels: { style: { color: '#cccccc' } },
-        lineColor: '#444',
-        tickColor: '#444'
-    },
-    yAxis: {
-        title: { style: { color: '#e1e1e1' } },
-        labels: { style: { color: '#cccccc' } },
-        gridLineColor: '#333'
-    },
-    legend: {
-        itemStyle: { color: '#e1e1e1' },
-        itemHoverStyle: { color: '#ffffff' }
-    },
-    tooltip: {
-        backgroundColor: '#333',
-        borderColor: '#777',
-        style: { color: '#fff' }
+  chart: {
+    backgroundColor: '#1b1b1b',
+    style: {
+      fontFamily: 'Helvetica Neue, Arial, sans-serif'
     }
+  },
+  title: {
+    style: {
+      color: '#e1e1e1',
+      fontWeight: '600',
+      fontSize: '16px'
+    }
+  },
+  xAxis: {
+    labels: { style: { color: '#cccccc' } },
+    lineColor: '#444',
+    tickColor: '#444'
+  },
+  yAxis: {
+    title: { style: { color: '#e1e1e1' } },
+    labels: { style: { color: '#cccccc' } },
+    gridLineColor: '#333'
+  },
+  legend: {
+    itemStyle: { color: '#e1e1e1' },
+    itemHoverStyle: { color: '#ffffff' }
+  },
+  tooltip: {
+    backgroundColor: '#333',
+    borderColor: '#777',
+    style: { color: '#fff' }
+  }
 });
 </script>
 
@@ -104,22 +104,28 @@ function parseCSVRow(row) {
 fetch('168_station_data.csv')
   .then(res => res.text())
   .then(csv => {
-    const rows = csv.trim().split('\n').slice(1); // Skip header
+    const rows = csv.trim().split('\n').slice(1);
     const data = rows.map(parseCSVRow);
 
     const tempData = data.map(d => [d.time, d.temp]);
     const heatIndexData = data.map(d => [d.time, d.heat]);
     const excessData = data.map(d => [d.time, d.heat - d.temp]);
 
-    Highcharts.stockChart('tempChart', {
-      rangeSelector: { selected: 1 },
+    Highcharts.chart('tempChart', {
+      chart: {
+        zoomType: 'x',
+        panning: true,
+        panKey: 'shift'
+      },
       title: { text: 'Temperature and Heat Index Over Time' },
       xAxis: {
+        type: 'datetime',
         crosshair: { color: '#ffffff', width: 1 },
-        events: { setExtremes: syncExtremes }
+        events: { setExtremes: syncExtremes },
+        title: { text: 'Time' }
       },
-      yAxis: { title: { text: 'Temperature (°F)' } },
       tooltip: { shared: true },
+      yAxis: { title: { text: 'Temperature (°F)' } },
       exporting: { enabled: true },
       series: [
         { name: 'Temperature', data: tempData, color: '#00c1d5' },
@@ -127,15 +133,21 @@ fetch('168_station_data.csv')
       ]
     });
 
-    Highcharts.stockChart('excessChart', {
-      rangeSelector: { selected: 1 },
+    Highcharts.chart('excessChart', {
+      chart: {
+        zoomType: 'x',
+        panning: true,
+        panKey: 'shift'
+      },
       title: { text: 'Heat Excess (Heat Index - Temperature)' },
       xAxis: {
+        type: 'datetime',
         crosshair: { color: '#ffffff', width: 1 },
-        events: { setExtremes: syncExtremes }
+        events: { setExtremes: syncExtremes },
+        title: { text: 'Time' }
       },
-      yAxis: { title: { text: 'Excess Heat (°F)' } },
       tooltip: { shared: true },
+      yAxis: { title: { text: 'Excess Heat (°F)' } },
       exporting: { enabled: true },
       series: [{
         name: 'Heat Excess',
