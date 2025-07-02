@@ -142,9 +142,21 @@
         chart: { type: 'area', zoomType: 'x', pinchType: 'x', panning: true, panKey: 'shift' },
         title: { text: '' },
         xAxis: { type: 'datetime', crosshair: true, events: { setExtremes: syncExtremes } },
-        yAxis: { title: { text: 'Excess (°F)' } },
+        yAxis: {
+          title: { text: 'Excess (°F)' },
+          plotBands: [
+            { from: 5, to: 10, color: 'rgba(255,255,0,0.15)', label: { text: 'Moderate Risk', style: { color: '#ccc' } } },
+            { from: 10, to: 15, color: 'rgba(255,153,0,0.15)', label: { text: 'High Risk', style: { color: '#ccc' } } },
+            { from: 15, to: 50, color: 'rgba(255,0,0,0.15)', label: { text: 'Extreme Risk', style: { color: '#ccc' } } }
+          ]
+        },
         tooltip: { shared: true, valueDecimals: 1 },
-        series: [{ name: 'Heat Excess', data: excessData, color: '#ff433d', fillOpacity: 0.5 }]
+        series: [{
+          name: 'Heat Excess',
+          data: excessData,
+          color: '#ff433d',
+          fillOpacity: 0.5
+        }]
       }));
     });
 </script>
