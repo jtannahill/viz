@@ -39,6 +39,39 @@
 <div id="excessChart" style="height: 400px; width: 100%;"></div>
 
 <script>
+    Highcharts.setOptions({
+    chart: {
+        backgroundColor: '#1b1b1b',
+        style: {
+            fontFamily: 'Helvetica Neue, Arial, sans-serif'
+        }
+    },
+    title: {
+        style: {
+            color: '#e1e1e1',
+            fontWeight: '600',
+            fontSize: '16px'
+        }
+    },
+    xAxis: {
+        labels: { style: { color: '#cccccc' } },
+        lineColor: '#444',
+        tickColor: '#444'
+    },
+    yAxis: {
+        title: { style: { color: '#e1e1e1' } },
+        labels: { style: { color: '#cccccc' } },
+        gridLineColor: '#333'
+    },
+    legend: {
+        itemStyle: { color: '#e1e1e1' },
+        itemHoverStyle: { color: '#ffffff' }
+    },
+    tooltip: {
+        backgroundColor: '#333',
+        borderColor: '#777',
+        style: { color: '#fff' }
+    }
 // First chart: Temperature & Heat Index
 Highcharts.chart('tempChart', {
     chart: {
