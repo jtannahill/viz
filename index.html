@@ -54,15 +54,15 @@
         }
     },
     xAxis: {
-        labels: { style: { color: '#cccccc' } },
-        lineColor: '#444',
-        tickColor: '#444'
     type: 'datetime',
-    crosshair: true,
-    events: {
-        setExtremes: syncExtremes
-    }
-},
+    crosshair: {
+        color: '#ffffff',
+        width: 1,
+        dashStyle: 'Solid'
+    },
+    events: { setExtremes: syncExtremes },
+    title: { text: 'Time' }
+}
 tooltip: {
     shared: true
 }
@@ -204,14 +204,14 @@ Highcharts.chart('tempChart', {
     chart: { zoomType: 'x' },
     title: { text: 'Station Heat Data: Temperature and Heat Index' },
     xAxis: {
-        type: 'datetime',
-        crosshair: {
-            color: '#ffffff',
-            width: 1,
-            dashStyle: 'Solid'
-        },
-        events: { setExtremes: syncExtremes },
-        title: { text: 'Time' }
+    type: 'datetime',
+    crosshair: {
+        color: '#ffffff',
+        width: 1,
+        dashStyle: 'Solid'
+    },
+    events: { setExtremes: syncExtremes },
+    title: { text: 'Time' }
     },
     tooltip: { shared: true },
     yAxis: {
