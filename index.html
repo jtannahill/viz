@@ -4,13 +4,11 @@
   <meta charset="utf-8">
   <title>168th Street Station in Manhattan</title>
   <script src="https://code.highcharts.com/highcharts.js"></script>
-  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-  <script src="https://code.highcharts.com/modules/more.js"></script>
   <style>
     body {
       background-color: #1b1b1b;
       color: #e1e1e1;
-      font-family: 'Helvetica Neue', Arial, system-ui, sans-serif;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
       margin: 40px;
     }
     h2 {
@@ -112,16 +110,14 @@ fetch('168_station_data.csv')
     Highcharts.chart('tempChart', {
       chart: {
         zoomType: 'x',
-        panning: {
-          enabled: true,
-          type: 'x'
-        },
+        panning: true,
+        panKey: 'shift',
         pinchType: 'x'
       },
       title: { text: 'Temperature and Heat Index Over Time' },
       xAxis: {
         type: 'datetime',
-        crosshair: { color: '#ffffff', width: 1 },
+        crosshair: true,
         events: { setExtremes: syncExtremes },
         title: { text: 'Time' }
       },
@@ -137,16 +133,14 @@ fetch('168_station_data.csv')
       chart: {
         type: 'area',
         zoomType: 'x',
-        panning: {
-          enabled: true,
-          type: 'x'
-        },
+        panning: true,
+        panKey: 'shift',
         pinchType: 'x'
       },
       title: { text: 'Heat Excess (Heat Index - Temperature)' },
       xAxis: {
         type: 'datetime',
-        crosshair: { color: '#ffffff', width: 1 },
+        crosshair: true,
         events: { setExtremes: syncExtremes },
         title: { text: 'Time' }
       },
