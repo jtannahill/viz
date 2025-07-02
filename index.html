@@ -98,7 +98,7 @@ function parseCSVRow(row) {
 fetch('168_station_data.csv')
   .then(res => res.text())
   .then(csv => {
-    const rows = csv.trim().split('\\n').slice(1); // Skip header
+    const rows = csv.trim().split('\n').slice(1); // Skip header
     const data = rows.map(parseCSVRow);
 
     const tempData = data.map(d => [d.time, d.temp]);
