@@ -29,6 +29,16 @@
       height: 400px;
       margin-top: 20px;
     }
+    .reset-btn {
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+      background-color: #555;
+      color: #eee;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -39,6 +49,8 @@
 
   <h2>Heat Excess (Heat Index - Temp)</h2>
   <div id="excessChart"></div>
+
+  <button class="reset-btn" onclick="resetZoom()">Reset Zoom</button>
 </div>
 
 <script>
@@ -69,40 +81,41 @@
     }
   });
 
+  let charts = [];
+
   function syncExtremes(e) {
-    const thisChart = this.chart;
-    Highcharts.charts.forEach(chart => {
-      if (chart !== thisChart && chart && chart.xAxis[0].setExtremes) {
-        chart.xAxis[0].setExtremes(e.min, e.max, true, false);
-      }
-    });
+    if (e.trigger !== 'sync') {
+      Highcharts.each(charts, function(chart) {
+        if (chart !== e.target.chart) {
+          chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'sync' });
+        }
+      });
+    }
   }
 
-  function parseCSVRow(row) {
-    const [time, temp, heat] = row.split(',');
-    return {
-      time: new Date(time).getTime(),
-      temp: parseFloat(temp),
-      heat: parseFloat(heat)
-    };
+  function resetZoom() {
+    charts.forEach(chart => chart.zoomOut());
   }
 
   fetch('168_station_data.csv')
     .then(response => response.text())
     .then(csv => {
       const rows = csv.trim().split('\n').slice(1);
-      const data = rows.map(parseCSVRow);
+      const data = rows.map(row => {
+        const [time, temp, heat] = row.split(',');
+        return {
+          time: new Date(time).getTime(),
+          temp: parseFloat(temp),
+          heat: parseFloat(heat)
+        };
+      });
 
       const tempData = data.map(d => [d.time, d.temp]);
       const heatData = data.map(d => [d.time, d.heat]);
       const excessData = data.map(d => [d.time, d.heat - d.temp]);
 
-      Highcharts.chart('tempChart', {
-        chart: {
-          zoomType: 'x',
-          panning: true,
-          panKey: 'shift'
-        },
+      charts.push(Highcharts.chart('tempChart', {
+        chart: { zoomType: 'x' },
         title: { text: '' },
         xAxis: {
           type: 'datetime',
@@ -116,15 +129,10 @@
           { name: 'Temperature', data: tempData, color: '#00c1d5' },
           { name: 'Heat Index', data: heatData, color: '#ff6f61' }
         ]
-      });
+      }));
 
-      Highcharts.chart('excessChart', {
-        chart: {
-          type: 'area',
-          zoomType: 'x',
-          panning: true,
-          panKey: 'shift'
-        },
+      charts.push(Highcharts.chart('excessChart', {
+        chart: { type: 'area', zoomType: 'x' },
         title: { text: '' },
         xAxis: {
           type: 'datetime',
@@ -140,7 +148,7 @@
           color: '#9b59b6',
           fillOpacity: 0.5
         }]
-      });
+      }));
     });
 </script>
 
