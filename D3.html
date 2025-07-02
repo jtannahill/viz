@@ -58,7 +58,7 @@
 <svg id="chart1"></svg>
 
 <h2>Heat Excess (Heat Index - Temp)</h2>
-<div class="note">Risk bands informed by Anderson & Bell (2009), <em>Environmental Health Perspectives</em>.</div>
+<div class="note">Risk bands based on temperature-related mortality thresholds from Anderson & Bell (2009), <em>Environmental Health Perspectives</em>.</div>
 <svg id="chart2"></svg>
 
 <script>
@@ -92,12 +92,12 @@ function createChart(svgId, dataSets, colors, yLabel) {
   xAxis.call(d3.axisBottom(x));
   yAxis.call(d3.axisLeft(y));
 
-  // Add threshold bands for chart2 (heat excess)
+  // Add threshold bands for chart2 (heat excess) based on Anderson & Bell (2009)
   if (svgId === "#chart2") {
     const thresholds = [
-      { min: 5, max: 10, color: "#ffff00" }, // Moderate
-      { min: 10, max: 15, color: "#ff9900" }, // High
-      { min: 15, max: 100, color: "#ff0000" } // Extreme
+      { min: 4, max: 8, color: "#ffff00" }, // Low-Mid Excess (elevated risk)
+      { min: 8, max: 12, color: "#ff9900" }, // Mid-High Excess (higher risk)
+      { min: 12, max: 100, color: "#ff0000" } // Very High Excess (extreme risk)
     ];
     thresholds.forEach(t => {
       g.append("rect")
