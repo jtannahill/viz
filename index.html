@@ -94,7 +94,7 @@
   }
 
   function resetZoom() {
-    charts.forEach(chart => chart.zoomOut());
+    charts.forEach(chart => chart.xAxis[0].setExtremes(null, null));
   }
 
   fetch('168_station_data.csv')
