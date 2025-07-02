@@ -40,6 +40,9 @@
       font-size: 12px;
       color: #fff;
     }
+    .threshold {
+      opacity: 0.2;
+    }
   </style>
 </head>
 <body>
@@ -80,6 +83,24 @@ function createChart(svgId, dataSets, colors, yLabel) {
 
   xAxis.call(d3.axisBottom(x));
   yAxis.call(d3.axisLeft(y));
+
+  // Add threshold bands for chart2 (heat excess)
+  if (svgId === "#chart2") {
+    const thresholds = [
+      { min: 5, max: 10, color: "#ffff00" }, // Moderate
+      { min: 10, max: 15, color: "#ff9900" }, // High
+      { min: 15, max: 100, color: "#ff0000" } // Extreme
+    ];
+    thresholds.forEach(t => {
+      g.append("rect")
+        .attr("x", 0)
+        .attr("width", width)
+        .attr("y", y(t.max))
+        .attr("height", y(t.min) - y(t.max))
+        .attr("fill", t.color)
+        .attr("class", "threshold");
+    });
+  }
 
   dataSets.forEach((data, i) => {
     g.append("path")
