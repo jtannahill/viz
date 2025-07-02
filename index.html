@@ -57,6 +57,15 @@
         labels: { style: { color: '#cccccc' } },
         lineColor: '#444',
         tickColor: '#444'
+    type: 'datetime',
+    crosshair: true,
+    events: {
+        setExtremes: syncExtremes
+    }
+},
+tooltip: {
+    shared: true
+}
     },
     yAxis: {
         title: { style: { color: '#e1e1e1' } },
@@ -140,6 +149,44 @@ Highcharts.chart('excessChart', {
         lineWidth: 2
     }]
 });
-</script>
+    // === INSERT THIS SYNC SCRIPT BELOW ===
+    function syncExtremes(e) {
+      var thisChart = this.chart;
+      Highcharts.each(Highcharts.charts, function (chart) {
+        if (chart !== thisChart && chart) {
+          if (chart.xAxis[0].setExtremes) {
+            chart.xAxis[0].setExtremes(e.min, e.max, undefined, false);
+          }
+        }
+      });
+    }
+
+    ['mousemove', 'touchmove', 'touchstart'].forEach(function (eventType) {
+      ['heatChart', 'footTrafficChart'].forEach(function (chartID) {
+        const container = document.getElementById(chartID);
+        if (container) {
+          container.addEventListener(eventType, function (e) {
+            Highcharts.each(Highcharts.charts, function (chart) {
+              if (chart && chart.pointer) {
+                const event = chart.pointer.normalize(e);
+                const point = chart.series[0].searchPoint(event, true);
+                if (point) {
+                  point.highlight(e);
+                }
+              }
+            });
+          });
+        }
+      });
+    });
+
+    Highcharts.Pointer.prototype.reset = () => undefined;
+
+    Highcharts.Point.prototype.highlight = function (event) {
+      this.onMouseOver(); 
+      this.series.chart.tooltip.refresh(this); 
+      this.series.chart.xAxis[0].drawCrosshair(event, this);
+    };
+  </script>
 </body>
 </html>
