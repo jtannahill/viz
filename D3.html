@@ -31,6 +31,15 @@
       fill: none;
       pointer-events: all;
     }
+    .tooltip {
+      position: absolute;
+      background-color: #333;
+      padding: 5px 10px;
+      border-radius: 3px;
+      pointer-events: none;
+      font-size: 12px;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -57,22 +66,11 @@ function createChart(svgId, dataSets, colors, yLabel) {
   const xAxis = g.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`);
   const yAxis = g.append("g").attr("class", "axis");
 
-  const lines = dataSets.map((_, i) => d3.line()
-    .x(d => x(d.time))
-    .y(d => y(d.value)));
+  const lines = dataSets.map(() => d3.line().x(d => x(d.time)).y(d => y(d.value)));
 
-  const zoom = d3.zoom()
-    .scaleExtent([1, 20])
-    .translateExtent([[0, 0], [width, height]])
-    .extent([[0, 0], [width, height]])
-    .on("zoom", zoomed);
-
-  svg.append("rect")
-    .attr("class", "overlay")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("transform", `translate(${margin.left},${margin.top})`)
-    .call(zoom);
+  const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
 
   x.domain(d3.extent(dataSets[0], d => d.time));
   y.domain([
@@ -91,13 +89,24 @@ function createChart(svgId, dataSets, colors, yLabel) {
       .attr("d", lines[i]);
   });
 
-  function zoomed(event) {
-    const newX = event.transform.rescaleX(x);
-    xAxis.call(d3.axisBottom(newX));
-    lines.forEach((line, i) => {
-      g.selectAll(".line").filter((_, idx) => idx === i).attr("d", line.x(d => newX(d.time)));
-    });
-  }
+  svg.append("rect")
+    .attr("class", "overlay")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("transform", `translate(${margin.left},${margin.top})`)
+    .on("mousemove", function(event) {
+      const mouse = d3.pointer(event);
+      const mouseX = x.invert(mouse[0]);
+      const bisect = d3.bisector(d => d.time).left;
+      const idx = bisect(dataSets[0], mouseX);
+      const d = dataSets[0][idx];
+
+      tooltip.transition().duration(100).style("opacity", 0.9);
+      tooltip.html(`${d3.timeFormat('%Y-%m-%d %H:%M')(d.time)}<br>${yLabel}: ${d.value}`)
+          .style("left", (event.pageX + 15) + "px")
+          .style("top", (event.pageY - 15) + "px");
+    })
+    .on("mouseout", () => tooltip.transition().duration(200).style("opacity", 0));
 }
 
 d3.csv('168_station_data.csv').then(rawData => {
@@ -111,7 +120,7 @@ d3.csv('168_station_data.csv').then(rawData => {
   createChart("#chart1",
     [data.map(d => ({time: d.time, value: d.temp})), data.map(d => ({time: d.time, value: d.heat}))],
     ["#ffffff", "#fb8b1e"],
-    "°F");
+    "Value (°F)");
 
   createChart("#chart2",
     [data.map(d => ({time: d.time, value: d.excess}))],
