@@ -73,52 +73,6 @@
         style: { color: '#fff' }
     }
         }); // ✅ closes setOptions
-// First chart: Temperature & Heat Index
-Highcharts.chart('tempChart', {
-    chart: {
-        zoomType: 'x'
-    },
-    title: {
-        text: 'Station Heat Data: Temperature and Heat Index'
-    },
-    xAxis: {
-        type: 'datetime',
-        title: { text: 'Time' }
-    },
-    yAxis: {
-        title: { text: 'Temperature (°F)' }
-    },
-    tooltip: {
-        shared: true,
-        xDateFormat: '%Y-%m-%d %I:%M %p',
-        valueSuffix: ' °F'
-    },
-    legend: {
-        enabled: true
-    },
-});
-
-// Second chart: Heat Excess
-Highcharts.chart('excessChart', {
-    chart: {
-        type: 'area',
-        zoomType: 'x'
-    },
-    title: {
-        text: 'Heat Index Minus Temperature (Heat Excess)'
-    },
-    xAxis: {
-        type: 'datetime',
-        title: { text: 'Time' }
-    },
-    yAxis: {
-        title: { text: 'Excess (°F)' }
-    },
-    tooltip: {
-        valueSuffix: ' °F',
-        xDateFormat: '%Y-%m-%d %I:%M %p'
-    },
-});
 </script>
     <script>
 function syncExtremes(e) {
