@@ -124,7 +124,7 @@
 
       const tempData = data.map(d => [d.time, d.temp]);
       const heatData = data.map(d => [d.time, d.heat]);
-      const excessData = data.map(d => [d.time, d.heat - d.temp]);
+      const excessData = data.map(d => [d.time, parseFloat((d.heat - d.temp).toFixed(1))]);
 
       charts.push(Highcharts.chart('tempChart', {
         chart: { zoomType: 'x', pinchType: 'x', panning: true, panKey: 'shift' },
@@ -143,7 +143,7 @@
         title: { text: '' },
         xAxis: { type: 'datetime', crosshair: true, events: { setExtremes: syncExtremes } },
         yAxis: { title: { text: 'Excess (°F)' } },
-        tooltip: { shared: true },
+        tooltip: { shared: true, valueDecimals: 1 },
         series: [{ name: 'Heat Excess', data: excessData, color: '#ff433d', fillOpacity: 0.5 }]
       }));
     });
