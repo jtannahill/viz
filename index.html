@@ -40,6 +40,13 @@
       border-radius: 5px;
       font-size: 14px;
     }
+    .note {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
     @media (min-width: 600px) {
       #tempChart, #excessChart {
         height: 400px;
@@ -60,6 +67,7 @@
   <div id="tempChart"></div>
 
   <h2>Heat Excess (Heat Index - Temp)</h2>
+  <div class="note">Risk bands based on mortality thresholds from Anderson & Bell (2009), <em>Environmental Health Perspectives</em>.</div>
   <div id="excessChart"></div>
 
   <button class="reset-btn" onclick="resetZoom()">Reset Zoom</button>
@@ -145,9 +153,9 @@
         yAxis: {
           title: { text: 'Excess (°F)' },
           plotBands: [
-            { from: 5, to: 10, color: 'rgba(255,255,0,0.15)', label: { text: 'Moderate Risk', style: { color: '#ccc' } } },
-            { from: 10, to: 15, color: 'rgba(255,153,0,0.15)', label: { text: 'High Risk', style: { color: '#ccc' } } },
-            { from: 15, to: 50, color: 'rgba(255,0,0,0.15)', label: { text: 'Extreme Risk', style: { color: '#ccc' } } }
+            { from: 4, to: 8, color: 'rgba(255,255,0,0.15)', label: { text: 'Elevated Risk', style: { color: '#ccc' } } },
+            { from: 8, to: 12, color: 'rgba(255,153,0,0.15)', label: { text: 'High Risk', style: { color: '#ccc' } } },
+            { from: 12, to: 50, color: 'rgba(255,0,0,0.15)', label: { text: 'Extreme Risk', style: { color: '#ccc' } } }
           ]
         },
         tooltip: { shared: true, valueDecimals: 1 },
