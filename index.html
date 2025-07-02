@@ -71,16 +71,6 @@
       backgroundColor: '#1b1b1b',
       style: { fontFamily: 'Helvetica Neue, Arial, sans-serif' }
     },
-    responsive: {
-      rules: [{
-        condition: { maxWidth: 600 },
-        chartOptions: {
-          legend: { enabled: false },
-          yAxis: { title: { text: null } },
-          xAxis: { labels: { format: '{value:%H:%M}' } }
-        }
-      }]
-    },
     xAxis: {
       labels: { style: { color: '#ccc' } },
       gridLineColor: '#333',
@@ -137,7 +127,7 @@
       const excessData = data.map(d => [d.time, d.heat - d.temp]);
 
       charts.push(Highcharts.chart('tempChart', {
-        chart: { zoomType: 'x' },
+        chart: { zoomType: 'x', pinchType: 'x', panning: true, panKey: 'shift' },
         title: { text: '' },
         xAxis: { type: 'datetime', crosshair: true, events: { setExtremes: syncExtremes } },
         yAxis: { title: { text: '°F' } },
@@ -149,7 +139,7 @@
       }));
 
       charts.push(Highcharts.chart('excessChart', {
-        chart: { type: 'area', zoomType: 'x' },
+        chart: { type: 'area', zoomType: 'x', pinchType: 'x', panning: true, panKey: 'shift' },
         title: { text: '' },
         xAxis: { type: 'datetime', crosshair: true, events: { setExtremes: syncExtremes } },
         yAxis: { title: { text: 'Excess (°F)' } },
